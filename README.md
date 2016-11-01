@@ -6,6 +6,11 @@ A series of examples showing how to use a cubemap and GLSL shader to output an e
 
 Taking the Dome Sphere Projection example code from the Processing app, it was modified to render the Cube Map to have 6 textures. The dome projection shaders were removed, and an [equirectangular shader] [shader] by [user BeRo] [berolink] added to convert the cubemap to an equirectangular image suitable for use in 360 video.
 
+### Example videos
+- [https://www.youtube.com/watch?v=7HEyj7Mjoq4]
+- [https://www.youtube.com/watch?v=EbMCDnFhE_w]
+- [https://www.youtube.com/watch?v=AHRJxdK-obA]
+
 ### Usage
 - Place all objects that are to be drawn to screen in the drawScene() method
 - Put any animation update variables in the animationPreUpdate() or animationPostUpdate() methods
@@ -18,6 +23,10 @@ Taking the Dome Sphere Projection example code from the Processing app, it was m
 ### To do
 - Add settings for NEAREST/LINEAR/LINEAR_MIPMAP_LINEAR texture filter
 - Add camera control
+
+### Know issues
+
+When saving frames, these sketches run slow. Between 2 and 5 fps slow. The goal isn't really to get it running in realtime, but having a way to export Procesing sketches as frames for a 360 video. That said, when not saving frames, it runs fine depending on hardware and how much you're drawing to the screen (anywhere between 30 and 60 fps in tests I've done).
 
 [YT360]: <https://support.google.com/youtube/answer/6178631?hl=en>
 [shader]: <https://www.shadertoy.com/view/XsBSDR#>
