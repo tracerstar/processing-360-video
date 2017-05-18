@@ -1,6 +1,10 @@
 # Processing 360 video output
 
-A series of examples showing how to use a cubemap and GLSL shader to output an equirectangular image that can be captured to create mono 360 videos.
+A series of examples showing how to use a cubemap and GLSL shader to output an equirectangular image that can be captured to create mono & 3D 360 videos.
+
+### UPDATE:
+
+Adding in an example of top/bottom 3D sterescoping rendering. This is largely a port of Kite & Lightning's Unreal Engine plugin, modified to work with Processing. Also, read [Paul Bourke's writings] [pbLink] on the subject. It's invaluable information. I wouldn't have gotten this far without it. 
 
 ### Source
 
@@ -31,3 +35,4 @@ When saving frames, these sketches run slow. Between 2 and 5 fps slow. The goal 
 [YT360]: <https://support.google.com/youtube/answer/6178631?hl=en>
 [shader]: <https://www.shadertoy.com/view/XsBSDR#>
 [berolink]: <https://www.shadertoy.com/user/BeRo>
+[pbLink]: <http://paulbourke.net/stereographics/stereopanoramic/>
