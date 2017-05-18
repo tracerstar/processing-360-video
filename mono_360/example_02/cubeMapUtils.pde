@@ -15,6 +15,11 @@ void initCubeMap() {
   myRect = createShape(RECT, -width/2, -height/2, width, height);
   myRect.setStroke(false);
 
+  int txtMapSize = envMapSize;
+  if (g.pixelDensity == 2) {
+    txtMapSize = envMapSize * 2;
+  }
+
   PGL pgl = beginPGL();
 
   envMapTextureID = IntBuffer.allocate(1);
@@ -26,7 +31,7 @@ void initCubeMap() {
   pgl.texParameteri(PGL.TEXTURE_CUBE_MAP, PGL.TEXTURE_MIN_FILTER, PGL.LINEAR);
   pgl.texParameteri(PGL.TEXTURE_CUBE_MAP, PGL.TEXTURE_MAG_FILTER, PGL.LINEAR);
   for (int i = PGL.TEXTURE_CUBE_MAP_POSITIVE_X; i < PGL.TEXTURE_CUBE_MAP_POSITIVE_X + 6; i++) {
-    pgl.texImage2D(i, 0, PGL.RGBA8, envMapSize, envMapSize, 0, PGL.RGBA, PGL.UNSIGNED_BYTE, null);
+    pgl.texImage2D(i, 0, PGL.RGBA8, txtMapSize, txtMapSize, 0, PGL.RGBA, PGL.UNSIGNED_BYTE, null);
   }
 
   // Init fbo, rbo
@@ -38,7 +43,7 @@ void initCubeMap() {
 
   pgl.genRenderbuffers(1, rbo);
   pgl.bindRenderbuffer(PGL.RENDERBUFFER, rbo.get(0));
-  pgl.renderbufferStorage(PGL.RENDERBUFFER, PGL.DEPTH_COMPONENT24, envMapSize, envMapSize);
+  pgl.renderbufferStorage(PGL.RENDERBUFFER, PGL.DEPTH_COMPONENT24, txtMapSize, txtMapSize);
 
   // Attach depth buffer to FBO
   pgl.framebufferRenderbuffer(PGL.FRAMEBUFFER, PGL.DEPTH_ATTACHMENT, PGL.RENDERBUFFER, rbo.get(0));    
@@ -66,7 +71,9 @@ void drawCubeMap() {
 
 void drawDomeMaster() {
   camera();
-  ortho();
+  // ortho();
+  ortho(width/2, -width/2, -height/2, height/2);
+
   resetMatrix();
   shader(cubemapShader);
   shape(myRect);
@@ -80,32 +87,30 @@ void regenerateEnvMap(PGL pgl) {
 
   // generate 6 views from origin(0, 0, 0)
   pgl.viewport(0, 0, envMapSize, envMapSize);    
-  perspective(90.0f * DEG_TO_RAD, 1.0f, 1.0f, 1025.0f);
+  perspective(90.0f * DEG_TO_RAD, 1.0f, 1.0f, zClippingPlane);
 
   //note the <= to generate 6 faces, not 5 as per DomeProjection example
   for (int face = PGL.TEXTURE_CUBE_MAP_POSITIVE_X; face <= 
-                  PGL.TEXTURE_CUBE_MAP_NEGATIVE_Z; face++) {
+                 PGL.TEXTURE_CUBE_MAP_NEGATIVE_Z; face++) {
 
     resetMatrix();
 
-    //added a negative Z camera
     if (face == PGL.TEXTURE_CUBE_MAP_POSITIVE_X) {
-      camera(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f);
+      camera(0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
     } else if (face == PGL.TEXTURE_CUBE_MAP_NEGATIVE_X) {
-      camera(0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f);
+      camera(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
     } else if (face == PGL.TEXTURE_CUBE_MAP_POSITIVE_Y) {
-      camera(0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f);  
+      camera(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, -1.0f);  
     } else if (face == PGL.TEXTURE_CUBE_MAP_NEGATIVE_Y) {
-      camera(0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      camera(0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
     } else if (face == PGL.TEXTURE_CUBE_MAP_POSITIVE_Z) {
-      camera(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f);
+      camera(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f);
     } else if (face == PGL.TEXTURE_CUBE_MAP_NEGATIVE_Z) {
-      camera(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f);
+      camera(0.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f);
     }
     
-    scale(-1, 1, -1);
-    //changes the Z pos to be 0, putting us in the center of the scene
-    translate(-width * 0.5f, -height * 0.5f, 0);
+    rotateY(HALF_PI); //sets forward facing to center of screen for video output
+    translate(-zClippingPlane, -zClippingPlane, 0);//defaults coords to processing style with 0,0 in top left of visible space
 
     pgl.framebufferTexture2D(PGL.FRAMEBUFFER, PGL.COLOR_ATTACHMENT0, face, envMapTextureID.get(0), 0);
 

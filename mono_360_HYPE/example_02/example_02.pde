@@ -1,9 +1,9 @@
 /**
  * Processing to 360 video
  * 
- * This sketch renders a cubemap to an equirectangular image that can be captured to create 360 videos.
+ * This sketch renders a cubemap to an equirectangular image that can be captured to create 360 photos or videos.
  *
- * example_004 - integration with HYPE Framework
+ * example_02 - integration with HYPE Framework
  * 
  * The code is a modification of the DomeProjection Processing example sketch, and an equirectangular GLSL shader by BeRo, on ShaderToy: 
  * https://www.shadertoy.com/view/XsBSDR#
@@ -24,19 +24,32 @@ IntBuffer fbo;
 IntBuffer rbo;
 IntBuffer envMapTextureID;
 
-int envMapSize = 1024;
+int envMapSize = 1024; //width & height used for the cubemap texture
+/*
+  The following float, zClippingPlane, is the distance from center to a cubemap wall. 
+  The higher the number, the further objects can travel before they begin to clip out of frame.
+  The pixel dimension of the drawable area is 0 to zClippingPlane * 2.
+  e.g. if zClippingPlane is 2000, the drawable area is 0 to 4000 in each direction (x, y, z).
+
+  Rather than rely on your screen width and height vars, you should use values based on the zClippingPlane.
+  i.e. to translate to center screen, use: 
+  translate(zClippingPlane, zClippingPlane, 0);
+
+  Remember instead of width/2 or height/2, use zClippingPlane, 
+  and instead of width or height, use zClippingPlane*2
+*/
+float zClippingPlane = 2000.0f;
 
 //set record to true if you want to save frames to make a video
 boolean record = false;
 
-//HYPE specific
+//HYPE specific vars
 HDrawablePool     pool;
 HSphereLayout     layout;
 HOrbiter3D        orb, orb2;
 
 void setup() {
-  //we'll be using the saved frames to create a 2048 x 1024 video, 
-  //2050 wide is necessary to clip the black edges off in the video editor.
+  //we'll be using the saved frames to create a 2048 x 1024 video
   size(2048, 1024, P3D);
 
   //for testing, you might want to work at a smaller resolution, but for export, the above is preferred
@@ -45,9 +58,8 @@ void setup() {
   smooth();
   background(0);
 
-  //For now, if you're on Retina screens, you have to suffer a little. 
-  //Turning the pixelDensity on, stuff gets weird. It's best you leave it off.
-  //pixelDensity(2);
+  // if you have a retina display, pixelDesnity(2) is supported. Bring on those 4k renders!
+  // pixelDensity(2);
 
   initCubeMap();
 
@@ -57,7 +69,7 @@ void setup() {
   pool = new HDrawablePool(200);
 
   layout = new HSphereLayout()
-    .loc(width/2, height/2, 0)
+    .loc(zClippingPlane, zClippingPlane, 0)
     .radius(200)
     .rotate(true)
     .useSpiral()
@@ -92,7 +104,7 @@ void setup() {
     .requestAll()
   ;
 
-  orb = new HOrbiter3D(width/2, height/2, 0)
+  orb = new HOrbiter3D(zClippingPlane, zClippingPlane, 0)
     .zSpeed(random(0.0, 1.0) + 0.5)
     .ySpeed(random(0.0, 1.0) + 0.5)
     .radius(250)
@@ -100,7 +112,7 @@ void setup() {
     .yAngle( (int)random(360) )
   ;
 
-  orb2 = new HOrbiter3D(width/2, height/2, 0)
+  orb2 = new HOrbiter3D(zClippingPlane, zClippingPlane, 0)
     .zSpeed(random(0.0, 1.0) + 1.0)
     .ySpeed(random(0.0, 1.0) + 0.5)
     .radius(300)
@@ -164,7 +176,7 @@ void animationPostUpdate() {
   Put your shapes/objects and lights here to be drawn to the screen
 */
 void drawScene() {  
-  pointLight(35, 35, 35, width/2, height/2.5, 300);
+  pointLight(35, 35, 35, zClippingPlane, zClippingPlane-400, 300);
   pointLight(255, 0, 156,   orb.x(), orb.y(), orb.z()); // magenta
   pointLight(0, 100, 180,   orb2.x(), orb2.y(), orb2.z()); // blue
 

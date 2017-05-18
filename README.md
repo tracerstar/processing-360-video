@@ -1,6 +1,6 @@
 # Processing 360 video output
 
-A series of examples showing how to use a cubemap and GLSL shader to output an equirectangular image that can be captured to create 360 videos.
+A series of examples showing how to use a cubemap and GLSL shader to output an equirectangular image that can be captured to create mono 360 videos.
 
 ### Source
 
