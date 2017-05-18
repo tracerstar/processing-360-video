@@ -4,11 +4,11 @@ A series of examples showing how to use a cubemap and GLSL shader to output an e
 
 ### UPDATE:
 
-Adding in an example of top/bottom 3D sterescoping rendering. This is largely a port of Kite & Lightning's Unreal Engine plugin, modified to work with Processing. Also, read [Paul Bourke's writings] [pbLink] on the subject. It's invaluable information. I wouldn't have gotten this far without it. 
+Adding in an example of top/bottom 3D sterescoping rendering. This is largely a port of Kite & Lightning's Unreal Engine plugin, modified to work with Processing. Also, read [Paul Bourke's writings][pbLink] on the subject. It's invaluable information. I wouldn't have gotten this far without it. 
 
 ### Source
 
-Taking the Dome Sphere Projection example code from the Processing app, it was modified to render the Cube Map to have 6 textures. The dome projection shaders were removed, and an [equirectangular shader] [shader] by [user BeRo] [berolink] added to convert the cubemap to an equirectangular image suitable for use in 360 video.
+Taking the Dome Sphere Projection example code from the Processing app, it was modified to render the Cube Map to have 6 textures. The dome projection shaders were removed, and an [equirectangular shader][shader] by [user BeRo][berolink] added to convert the cubemap to an equirectangular image suitable for use in 360 video.
 
 ### Example videos
 - [https://www.youtube.com/watch?v=7HEyj7Mjoq4]
@@ -21,7 +21,7 @@ Taking the Dome Sphere Projection example code from the Processing app, it was m
 - Render the sketch as a sequence of png / tif frames
 - Import the frames into Premier (or similar video editor) to create a video sequence
 - Export the video
-- Use the [YouTube 360] [YT360] meta injector to add the 360 meta to your video
+- Use the [YouTube 360][YT360] meta injector to add the 360 meta to your video
 - Ensure the resulting video has "_360" at the end of the filename for it to work with Gear VR, 'filename_360.mp4' for example. 
 
 ### To do
