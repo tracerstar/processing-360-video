@@ -154,14 +154,14 @@ void setup() {
 	myDelay = 30.0 * 6.3;
 	
 
-/*
-  Not sure why this is necessary yet, but you have to set the perspective 
-  before setting the camera or the first slice will ignore all the camera rotations
-  For now, leave this as is and investigate later.
-*/
-canvas.beginDraw();
-canvas.perspective(radians(fieldOfView), 1, 1, 10000);
-canvas.endDraw();
+	/*
+	  Not sure why this is necessary yet, but you have to set the perspective 
+	  before setting the camera or the first slice will ignore all the camera rotations
+	  For now, leave this as is and will investigate later.
+	*/
+	canvas.beginDraw();
+	canvas.perspective(radians(fieldOfView), 1, 1, 10000);
+	canvas.endDraw();
 }
 
 void draw() {
@@ -176,9 +176,6 @@ void draw() {
 	myShader.set("sampleSet", unprojectedAtlas);
 	projection_tmp.filter(myShader);
 
-//unprojectedAtlas.save("debug/leftTex.jpg");
-//projection_tmp.save("debug/left_eye.jpg");
-	
 	//copy left eye to main projection frame
 	projection.copy(projection_tmp, 
 				0, 0, projection_tmp.width, projection_tmp.height, 
@@ -188,25 +185,15 @@ void draw() {
 	renderTexture(eyeSeparation/2);
 	myShader.set("sampleSet", unprojectedAtlas);
 	projection_tmp.filter(myShader);
-
-//unprojectedAtlas.save("debug/rightTex.jpg");
-//projection_tmp.save("debug/right_eye.jpg");
 	
 	//copy right eye to main projection frame
 	projection.copy((PImage) projection_tmp, 
 				0, 0, projection_tmp.width, projection_tmp.height, 
 				0, projection_tmp.height, projection_tmp.width, projection_tmp.height);
 
-
-//projection.save("debug/filename-"+frameCount+".jpg");
-//noLoop();
-//exit();
-
-
 	//save the frame
 	if (counter <= max) {
 		projection.save("frames/filename-"+counter+".png");
-    println(counter);
 	} else {
 		noLoop();
 		exit();
@@ -228,8 +215,6 @@ void drawStage() {
 
 	//can we listen to data and draw a frame?
 	if (counter < max) {
-		
-
 
 		//skybox
 		canvas.pushMatrix();
@@ -264,7 +249,6 @@ void drawStage() {
 		canvas.endShape(CLOSE);
 		canvas.popMatrix();
 
-
 		//sun
 		canvas.pushMatrix();
 			canvas.translate(width/2, height/2, -7800);
@@ -289,8 +273,6 @@ void drawStage() {
 			canvas.shape(sun, -sunSz/2, -sunSz/2, sunSz, sunSz);
 		canvas.popMatrix();
 
-
-
 		//display my terrain
 		canvas.pushMatrix();
 		canvas.noLights();
@@ -305,12 +287,10 @@ void drawStage() {
 		canvas.popMatrix();
 
 		canvas.blendMode(ADD);
-		//hint(DISABLE_DEPTH_TEST);
 		for (Drawable d : myObjects) {
 			d.display();
 		}
 		canvas.blendMode(BLEND);
-		//hint(ENABLE_DEPTH_TEST);
 	}
 
 	canvas.endDraw();
@@ -318,56 +298,54 @@ void drawStage() {
 
 void animationPreUpdate() {
 	//any variables used for animation BEFORE drawing is done should be placed here
-
-
 	TableRow row = table.getRow(counter);
 
-		for (int idx = 0; idx < 13; idx++) {
-			float h = row.getFloat(idx);
-			
-			if (h > avgs[idx]) {
+	for (int idx = 0; idx < 13; idx++) {
+		float h = row.getFloat(idx);
+		
+		if (h > avgs[idx]) {
 
-				cur[idx] = h;
+			cur[idx] = h;
 
-				//trigger an animation somewhere with this variable attached
-				if (idx == 0) {
-					//add a pyramid
-					Pyramid p = new Pyramid();
-					p.setPos(random(-4000, 4000), random(-4000, height/4), random(-6000, -4000));
-					p.setVel(0, 5, 20);//random(10, 50));
-					p.setIdx(floor(random(1, 8)));
-					myObjects.add(p);
-				}
-
-				if (idx == 9) {
-					Beams b = new Beams();
-					b.setPos(random(-5000, 5000), 900, -5500);
-					b.setVel(0, 0, 20);
-					b.setIdx(floor(random(1, 8)));
-					myObjects.add(b);
-				}
-
-				if (idx == 11 && myDelay >= delay) {
-					myDelay = 0;
-
-					Geo g = new Geo();
-					g.setPos(width/2, height/2, -5000);
-					g.setVel(0, 0, random(50, 80));
-					myObjects.add(g);
-				}
-
-				if (idx == 12 && frameCount > 1570) {
-					Icos i = new Icos();
-					i.setPos(random(-5000, 5000), 800, random(-5500, -1000));
-					i.setVel(0, -10, 20);
-					i.setIdx(floor(random(1, 8)));
-					myObjects.add(i);
-				}
-
-			} else {
-				cur[idx] *= 0.95;
+			//trigger an animation somewhere with this variable attached
+			if (idx == 0) {
+				//add a pyramid
+				Pyramid p = new Pyramid();
+				p.setPos(random(-4000, 4000), random(-4000, height/4), random(-6000, -4000));
+				p.setVel(0, 5, 20);//random(10, 50));
+				p.setIdx(floor(random(1, 8)));
+				myObjects.add(p);
 			}
+
+			if (idx == 9) {
+				Beams b = new Beams();
+				b.setPos(random(-5000, 5000), 900, -5500);
+				b.setVel(0, 0, 20);
+				b.setIdx(floor(random(1, 8)));
+				myObjects.add(b);
+			}
+
+			if (idx == 11 && myDelay >= delay) {
+				myDelay = 0;
+
+				Geo g = new Geo();
+				g.setPos(width/2, height/2, -5000);
+				g.setVel(0, 0, random(50, 80));
+				myObjects.add(g);
+			}
+
+			if (idx == 12 && frameCount > 1570) {
+				Icos i = new Icos();
+				i.setPos(random(-5000, 5000), 800, random(-5500, -1000));
+				i.setVel(0, -10, 20);
+				i.setIdx(floor(random(1, 8)));
+				myObjects.add(i);
+			}
+
+		} else {
+			cur[idx] *= 0.95;
 		}
+	}
 }
 
 void animationPostUpdate() {
@@ -383,5 +361,4 @@ void animationPostUpdate() {
 
 	counter += 1;
 	myDelay += 1;
-
 }
